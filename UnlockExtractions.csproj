@@ -5,14 +5,14 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>UnlockExtractions</AssemblyName>
-    <!-- Folder containing SPTarkov.Server.Core.dll; override with -p:SptPath=... -->
-    <SptPath Condition="'$(SptPath)' == ''">/run/media/fiumbo/SSD1/Wine Prefixes/SPT-Prefix/drive_c/SPT/SPT_Runtime</SptPath>
+    <Version>1.0.0</Version>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="$(SptPath)/SPTarkov.Server.Core.dll" Private="false" />
-    <Reference Include="$(SptPath)/SPTarkov.DI.dll" Private="false" />
-    <Reference Include="$(SptPath)/SPTarkov.Common.dll" Private="false" />
+    <PackageReference Include="SPTarkov.Common" Version="4.1.2" />
+    <PackageReference Include="SPTarkov.DI" Version="4.1.2" />
+    <PackageReference Include="SPTarkov.Server.Core" Version="4.1.2" />
     <Reference Include="$(SptPath)/SemanticVersioning.dll" Private="false" />
     <None Include="config.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

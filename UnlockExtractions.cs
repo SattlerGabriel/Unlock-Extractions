@@ -4,7 +4,6 @@ using SPTarkov.Common.Models.Logging;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Common;
-using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Enums;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Spt.Tables;
@@ -15,17 +14,17 @@ namespace UnlockExtractions;
 
 public record ModMetadata : IModMetadata
 {
-    public string ModGuid { get; init; } = "com.fiumbo.unlockextractions";
-    public string Name { get; init; } = "Unlock Extractions";
-    public string Author { get; init; } = "fiumbo";
+    public string ModGuid { get; init; } = "com.boombah.unlockextractions";
+    public string Name { get; init; } = "UnlockExtractions";
+    public string Author { get; init; } = "Boombah";
     public List<string>? Contributors { get; init; }
     public Version Version { get; init; } = new("1.0.0");
     public Range SptVersion { get; init; } = new("~4.1.0");
     public List<string>? Incompatibilities { get; init; }
     public Dictionary<string, Range>? ModDependencies { get; init; }
-    public string? Url { get; init; }
-    public bool HasPrepatcher { get; init; }
+    public string? Url { get; init; } = "https://github.com/SattlerGabriel/Unlock-Extractions";
     public string License { get; init; } = "MIT";
+    public bool HasPrepatcher { get; init; } = false;
 }
 
 public record ModConfig
@@ -44,7 +43,7 @@ public class UnlockExtractions(LocationTable locationTable, ISptLogger<UnlockExt
         ["Roubles"] = Money.ROUBLES,
         ["Dollars"] = Money.DOLLARS,
         ["Euros"] = Money.EUROS,
-        ["GP"] = Money.GP,
+        ["GP"] = Money.GP
     };
 
     public Task OnLoadAsync(CancellationToken cancellationToken)
@@ -88,17 +87,17 @@ public class UnlockExtractions(LocationTable locationTable, ISptLogger<UnlockExt
                     unlocked++;
                 }
 
-                if (paidCoop && exit.PassageRequirement == RequirementState.ScavCooperation)
-                {
-                    // Same shape as vehicle exits: hand over a stack of exactly Price of the currency
-                    exit.PassageRequirement = RequirementState.TransferItem;
-                    exit.ExfiltrationType = ExfiltrationType.SharedTimer;
-                    exit.Id = currencyTpl;
-                    exit.Count = config.Price;
-                    exit.CountPVE = config.Price;
-                    exit.RequirementTip = "EXFIL_Item";
-                    converted++;
-                }
+                if (!paidCoop ||
+                    exit.PassageRequirement != RequirementState.ScavCooperation)
+                    continue;
+                
+                exit.PassageRequirement = RequirementState.TransferItem;
+                exit.ExfiltrationType = ExfiltrationType.SharedTimer;
+                exit.Id = currencyTpl;
+                exit.Count = config.Price;
+                exit.CountPVE = config.Price;
+                exit.RequirementTip = "EXFIL_Item";
+                converted++;
             }
         }
 
